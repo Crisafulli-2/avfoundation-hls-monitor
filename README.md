@@ -5,21 +5,28 @@ A command-line tool for monitoring HLS (HTTP Live Streaming) streams using AVFou
 ## Features
 
 - Real-time monitoring of HLS streams
-- Display of key metrics including bitrate, buffer status, and dropped frames
-- Clean shutdown with SIGINT handling (Ctrl+C)
-- Colored output for better readability
+- Display of key streaming metrics:
+  - Playback status and duration
+  - Video quality
+  - Bitrate (indicated and observed)
+  - Buffer status
+  - Stall count
+  - Dropped frames
+  - Network transfer statistics
 
 ## Requirements
 
 - macOS 12.0 or later
 - Swift 5.5 or later
-- Xcode 13.0 or later (for development)
 
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/avfoundation-hls-monitor.git
+# Clone the repository
+git clone https://github.com/Crisafulli-2/avfoundation-hls-monitor.git
 cd avfoundation-hls-monitor
+
+# Build the project
 swift build -c release
 ```
 
@@ -29,45 +36,43 @@ swift build -c release
 swift run hlsmonitor <stream_url>
 ```
 
-Example:
+### Example
 ```bash
-swift run hlsmonitor https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8
+swift run hlsmonitor "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8"
 ```
 
-## Metrics Displayed
+## Metrics Reference
 
-- Playback buffer status
-- Current bitrate
-- Dropped frames count
-- Loaded time ranges
-- Stream timestamp
+| Metric | Description |
+|--------|-------------|
+| Time | Current timestamp |
+| Position | Current playback position |
+| Duration | Total stream duration |
+| Quality | Video resolution |
+| Indicated | Indicated bitrate |
+| Observed | Observed bitrate |
+| Buffer | Buffer duration |
+| Stalls | Number of playback stalls |
+| Dropped | Number of dropped frames |
+| Bytes | Total bytes transferred |
+| Transfer | Transfer rate |
+| Empty | Buffer empty status |
+| KeepUp | Playback keep-up status |
 
 ## Development
 
-To set up the development environment:
+### Built With
+- [AVFoundation](https://developer.apple.com/documentation/avfoundation) - Apple's media framework
+- [Swift Argument Parser](https://github.com/apple/swift-argument-parser) - Command-line interface
+- [Rainbow](https://github.com/onevcat/Rainbow) - Terminal output styling
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/avfoundation-hls-monitor.git
-
-# Navigate to the project directory
-cd avfoundation-hls-monitor
-
-# Build the project
-swift build
-
-# Run tests
-swift test
-```
-
-## License
-
-MIT License
-
-## Contributing
-
+### Contributing
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## License
+
+MIT License - See LICENSE file for details
