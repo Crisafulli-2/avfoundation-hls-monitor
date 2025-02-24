@@ -47,7 +47,7 @@ swift run hlsmonitor "https://devstreaming-cdn.apple.com/videos/streaming/exampl
 |--------|-------------|
 | Time | Current timestamp |
 | Position | Current playback position |
-| Duration | Total stream duration |
+| Stream Duration | Total stream duration |  # Changed from "Duration"
 | Quality | Video resolution |
 | Indicated | Indicated bitrate |
 | Observed | Observed bitrate |
