@@ -5,6 +5,23 @@ import Rainbow
 
 private var globalMonitor: HLSStreamMonitor?
 
+// Define metric order
+private let metricOrder = [
+    "Time",
+    "Position",
+    "Stream Duration",
+    "Quality",
+    "Indicated",
+    "Observed",
+    "Buffer",
+    "Stalls",
+    "Dropped",
+    "Bytes",
+    "Transfer",
+    "Empty",
+    "KeepUp"
+]
+
 @main
 struct HLSMonitor: ParsableCommand {
     static var configuration = CommandConfiguration(
@@ -13,7 +30,7 @@ struct HLSMonitor: ParsableCommand {
     )
     
     @Argument(help: "The URL of the HLS stream to monitor")
-    var streamURL: String
+    var streamURL: String = "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8"
     
     mutating func run() throws {
         guard let url = URL(string: streamURL) else {
@@ -101,8 +118,8 @@ final class HLSStreamMonitor {
         }
     }
 
-    private func collectMetrics(from playerItem: AVPlayerItem) -> [String: Any] {
-        var metrics: [String: Any] = [:]
+    private func collectMetrics(from playerItem: AVPlayerItem) -> [String: String] {
+        var metrics: [String: String] = [:]
         
         if let event = playerItem.accessLog()?.events.last {
             let dimensions = playerItem.presentationSize
@@ -111,13 +128,13 @@ final class HLSStreamMonitor {
             metrics = [
                 "Time": Date().formatted(date: .omitted, time: .standard),
                 "Position": String(format: "%.2fs", CMTimeGetSeconds(currentTime)),
-                "Duration": String(format: "%.2fs", CMTimeGetSeconds(playerItem.duration)),
+                "Stream Duration": String(format: "%.2fs", CMTimeGetSeconds(playerItem.duration)),
                 "Quality": "\(Int(dimensions.width))x\(Int(dimensions.height))",
                 "Indicated": String(format: "%.2f Mbps", event.indicatedBitrate / 1_000_000),
                 "Observed": String(format: "%.2f Mbps", event.observedBitrate / 1_000_000),
                 "Buffer": String(format: "%.1fs", playerItem.loadedTimeRanges.first?.timeRangeValue.duration.seconds ?? 0),
-                "Stalls": event.numberOfStalls,
-                "Dropped": event.numberOfDroppedVideoFrames,
+                "Stalls": "\(event.numberOfStalls)",
+                "Dropped": "\(event.numberOfDroppedVideoFrames)",
                 "Bytes": String(format: "%.2f MB", Double(event.numberOfBytesTransferred) / 1_000_000),
                 "Transfer": String(format: "%.2f Mbps", event.transferDuration > 0 ? Double(event.numberOfBytesTransferred) * 8 / event.transferDuration / 1_000_000 : 0),
                 "Empty": playerItem.isPlaybackBufferEmpty ? "Yes" : "No",
@@ -128,12 +145,15 @@ final class HLSStreamMonitor {
         return metrics
     }
     
-    private func displayMetrics(_ metrics: [String: Any]) {
+    private func displayMetrics(_ metrics: [String: String]) {
         DispatchQueue.main.async {
             print("\n▶️  HLS Metrics".cyan.bold)
             print("──────────────────")
-            metrics.forEach { key, value in
-                print("\(key.padded(to: 12)): \(value)".white)
+            // Display metrics in defined order
+            for key in metricOrder {
+                if let value = metrics[key] {
+                    print("\(key.padded(to: 12)): \(value)".white)
+                }
             }
             print("──────────────────")
         }
